@@ -169,9 +169,23 @@ async def get_cores():
     if result['success']:
         try:
             cores = json.loads(result['stdout'])
-            return {"success": True, "cores": cores}
+            return {"success": True, "cores": cores.get('platforms', [])}
         except json.JSONDecodeError:
             return {"success": False, "error": "Failed to parse cores"}
+    
+    return {"success": False, "error": result['stderr']}
+
+@api_router.get("/cores/search")
+async def search_cores():
+    """Get list of all available cores for installation"""
+    result = run_arduino_cli(['arduino-cli', 'core', 'search', '--format', 'json'])
+    
+    if result['success']:
+        try:
+            cores = json.loads(result['stdout'])
+            return {"success": True, "platforms": cores.get('platforms', [])}
+        except json.JSONDecodeError:
+            return {"success": False, "error": "Failed to parse available cores"}
     
     return {"success": False, "error": result['stderr']}
 
