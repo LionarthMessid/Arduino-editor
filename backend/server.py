@@ -130,17 +130,20 @@ async def get_available_boards():
     
     return {"success": False, "error": result['stderr']}
 
-@api_router.get("/libraries/available")
-async def get_available_libraries():
-    """Get list of all available libraries for installation"""
-    result = run_arduino_cli(['arduino-cli', 'lib', 'search', '--format', 'json'])
+@api_router.post("/libraries/search")
+async def search_libraries(request: LibrarySearchRequest):
+    """Search for libraries"""
+    if request.query:
+        result = run_arduino_cli(['arduino-cli', 'lib', 'search', request.query, '--format', 'json'])
+    else:
+        result = run_arduino_cli(['arduino-cli', 'lib', 'search', '--format', 'json'])
     
     if result['success']:
         try:
             libraries = json.loads(result['stdout'])
             return {"success": True, "libraries": libraries.get('libraries', [])}
         except json.JSONDecodeError:
-            return {"success": False, "error": "Failed to parse available libraries"}
+            return {"success": False, "error": "Failed to parse library search results"}
     
     return {"success": False, "error": result['stderr']}
 
