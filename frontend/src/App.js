@@ -78,6 +78,9 @@ void loop() {
     loadPorts();
     loadLibraries();
     loadWorkspace();
+    loadAvailableBoards();
+    loadCores();
+    searchLibraries(); // Load initial library list
   }, []);
 
   // API calls
