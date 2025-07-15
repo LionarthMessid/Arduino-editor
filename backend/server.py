@@ -176,13 +176,9 @@ async def get_cores():
     return {"success": False, "error": result['stderr']}
 
 @api_router.post("/cores/install")
-async def install_core(request: dict):
+async def install_core(request: CoreRequest):
     """Install a core"""
-    core_name = request.get('core_name')
-    if not core_name:
-        return {"success": False, "error": "Core name is required"}
-    
-    result = run_arduino_cli(['arduino-cli', 'core', 'install', core_name])
+    result = run_arduino_cli(['arduino-cli', 'core', 'install', request.core_name])
     
     return {
         "success": result['success'],
@@ -190,13 +186,9 @@ async def install_core(request: dict):
     }
 
 @api_router.post("/cores/uninstall")
-async def uninstall_core(request: dict):
+async def uninstall_core(request: CoreRequest):
     """Uninstall a core"""
-    core_name = request.get('core_name')
-    if not core_name:
-        return {"success": False, "error": "Core name is required"}
-    
-    result = run_arduino_cli(['arduino-cli', 'core', 'uninstall', core_name])
+    result = run_arduino_cli(['arduino-cli', 'core', 'uninstall', request.core_name])
     
     return {
         "success": result['success'],
