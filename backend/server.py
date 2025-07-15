@@ -85,10 +85,16 @@ class LibrarySearchRequest(BaseModel):
 def run_arduino_cli(command: List[str]) -> Dict:
     """Run arduino-cli command and return result"""
     try:
-        # Add arduino-cli to PATH and set HOME
+        # Add arduino-cli to PATH
         env = os.environ.copy()
-        env['PATH'] = f"/app/bin:{env.get('PATH', '')}"
-        env['HOME'] = '/root'
+        bin_path = str(ROOT_DIR.parent / 'bin')
+        env['PATH'] = f"{bin_path};{env.get('PATH', '')}"
+        # Set HOME to a Windows-compatible path
+        env['HOME'] = str(ROOT_DIR)
+        
+        # Use arduino-cli.exe on Windows
+        if command[0] == 'arduino-cli' and os.name == 'nt':
+            command[0] = 'arduino-cli.exe'
         
         result = subprocess.run(
             command,
@@ -231,7 +237,7 @@ async def get_libraries():
     if result['success']:
         try:
             libraries = json.loads(result['stdout'])
-            return {"success": True, "libraries": libraries.get('libraries', [])}
+            return {"success": True, "libraries": libraries.get('installed_libraries', [])}
         except json.JSONDecodeError:
             return {"success": False, "error": "Failed to parse library list"}
     
@@ -261,8 +267,8 @@ async def uninstall_library(request: LibraryRequest):
 async def compile_code(request: CompileRequest):
     """Compile Arduino code"""
     # Create temp directory for sketch
-    temp_dir = Path(f"/tmp/arduino_sketch_{uuid.uuid4()}")
-    temp_dir.mkdir(exist_ok=True)
+    temp_dir = Path(os.path.join(os.environ.get('TEMP', os.path.join(ROOT_DIR, 'temp')), f"arduino_sketch_{uuid.uuid4()}"))
+    temp_dir.mkdir(exist_ok=True, parents=True)
     
     # Write sketch file
     sketch_file = temp_dir / f"{temp_dir.name}.ino"
@@ -288,8 +294,8 @@ async def compile_code(request: CompileRequest):
 async def upload_code(request: UploadRequest):
     """Upload Arduino code to board"""
     # Create temp directory for sketch
-    temp_dir = Path(f"/tmp/arduino_sketch_{uuid.uuid4()}")
-    temp_dir.mkdir(exist_ok=True)
+    temp_dir = Path(os.path.join(os.environ.get('TEMP', os.path.join(ROOT_DIR, 'temp')), f"arduino_sketch_{uuid.uuid4()}"))
+    temp_dir.mkdir(exist_ok=True, parents=True)
     
     # Write sketch file
     sketch_file = temp_dir / f"{temp_dir.name}.ino"
@@ -339,8 +345,8 @@ async def save_file(file_data: FileContent):
 @api_router.get("/workspace")
 async def get_workspace():
     """Get workspace file tree"""
-    workspace_dir = Path("/tmp/arduino_workspace")
-    workspace_dir.mkdir(exist_ok=True)
+    workspace_dir = Path(os.path.join(os.environ.get('TEMP', os.path.join(ROOT_DIR, 'temp')), "arduino_workspace"))
+    workspace_dir.mkdir(exist_ok=True, parents=True)
     
     def build_tree(path: Path):
         tree = []
@@ -372,11 +378,15 @@ async def serial_websocket(websocket: WebSocket, port: str):
     try:
         # Start serial monitor
         env = os.environ.copy()
-        env['PATH'] = f"/app/bin:{env.get('PATH', '')}"
-        env['HOME'] = '/root'
+        bin_path = str(ROOT_DIR.parent / 'bin')
+        env['PATH'] = f"{bin_path};{env.get('PATH', '')}"
+        env['HOME'] = str(ROOT_DIR)
+        
+        # Use arduino-cli.exe on Windows
+        cli_command = 'arduino-cli.exe' if os.name == 'nt' else 'arduino-cli'
         
         process = subprocess.Popen(
-            ['arduino-cli', 'monitor', '--port', port],
+            [cli_command, 'monitor', '--port', port],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,

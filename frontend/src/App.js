@@ -108,7 +108,7 @@ void loop() {
         const portsArray = response.data.ports.detected_ports || [];
         setPorts(portsArray);
         if (portsArray.length > 0) {
-          setSelectedPort(portsArray[0].port);
+          setSelectedPort(portsArray[0].port.address);
         }
       }
     } catch (error) {
@@ -121,7 +121,16 @@ void loop() {
       const response = await axios.get(`${API}/libraries`);
       if (response.data.success) {
         const librariesArray = response.data.libraries || [];
-        setLibraries(librariesArray);
+        // Transform the library data to match the expected format
+        const formattedLibraries = librariesArray.map(lib => ({
+          name: lib.library?.name || 'Unknown Library',
+          version: lib.library?.version || lib.library?.latest?.version || '0.0.0',
+          author: lib.library?.author || 'Unknown',
+          maintainer: lib.library?.maintainer || 'Unknown',
+          website: lib.library?.website || '',
+          category: lib.library?.category || 'Uncategorized'
+        }));
+        setLibraries(formattedLibraries);
       }
     } catch (error) {
       console.error('Error loading libraries:', error);
@@ -414,7 +423,7 @@ void loop() {
                 >
                   <option value="">Select Port</option>
                   {ports.map((port, index) => (
-                    <option key={index} value={port.port}>{port.port}</option>
+                    <option key={index} value={port.port.address}>{port.port.label}</option>
                   ))}
                 </select>
                 <button 
@@ -655,6 +664,7 @@ void loop() {
                       <div>
                         <span className="text-sm font-medium">{lib.name}</span>
                         <span className="text-xs text-gray-400 ml-2">v{lib.version}</span>
+                        {lib.author && <div className="text-xs text-gray-500">by {lib.author}</div>}
                       </div>
                       <button 
                         onClick={() => {
