@@ -75,6 +75,12 @@ class UploadRequest(BaseModel):
 class LibraryRequest(BaseModel):
     library_name: str
 
+class CoreRequest(BaseModel):
+    core_name: str
+
+class LibrarySearchRequest(BaseModel):
+    query: str = ""
+
 # Arduino CLI wrapper functions
 def run_arduino_cli(command: List[str]) -> Dict:
     """Run arduino-cli command and return result"""
