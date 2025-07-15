@@ -149,14 +149,14 @@ void loop() {
     }
   };
 
-  const loadCores = async () => {
+  const loadAvailablePlatforms = async () => {
     try {
-      const response = await axios.get(`${API}/cores`);
+      const response = await axios.get(`${API}/cores/search`);
       if (response.data.success) {
-        setCores(response.data.cores || []);
+        setAvailablePlatforms(response.data.platforms || []);
       }
     } catch (error) {
-      console.error('Error loading cores:', error);
+      console.error('Error loading available platforms:', error);
     }
   };
 
