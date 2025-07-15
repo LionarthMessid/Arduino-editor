@@ -110,9 +110,9 @@ def run_arduino_cli(command: List[str]) -> Dict:
 async def root():
     return {"message": "Arduino Code Editor API"}
 
-@api_router.get("/boards")
-async def get_boards():
-    """Get list of available boards"""
+@api_router.get("/boards/available")
+async def get_available_boards():
+    """Get list of all available boards for installation"""
     result = run_arduino_cli(['arduino-cli', 'board', 'listall', '--format', 'json'])
     
     if result['success']:
@@ -120,9 +120,65 @@ async def get_boards():
             boards = json.loads(result['stdout'])
             return {"success": True, "boards": boards.get('boards', [])}
         except json.JSONDecodeError:
-            return {"success": False, "error": "Failed to parse board list"}
+            return {"success": False, "error": "Failed to parse available boards"}
     
     return {"success": False, "error": result['stderr']}
+
+@api_router.get("/libraries/available")
+async def get_available_libraries():
+    """Get list of all available libraries for installation"""
+    result = run_arduino_cli(['arduino-cli', 'lib', 'search', '--format', 'json'])
+    
+    if result['success']:
+        try:
+            libraries = json.loads(result['stdout'])
+            return {"success": True, "libraries": libraries.get('libraries', [])}
+        except json.JSONDecodeError:
+            return {"success": False, "error": "Failed to parse available libraries"}
+    
+    return {"success": False, "error": result['stderr']}
+
+@api_router.get("/cores")
+async def get_cores():
+    """Get list of installed cores"""
+    result = run_arduino_cli(['arduino-cli', 'core', 'list', '--format', 'json'])
+    
+    if result['success']:
+        try:
+            cores = json.loads(result['stdout'])
+            return {"success": True, "cores": cores}
+        except json.JSONDecodeError:
+            return {"success": False, "error": "Failed to parse cores"}
+    
+    return {"success": False, "error": result['stderr']}
+
+@api_router.post("/cores/install")
+async def install_core(request: dict):
+    """Install a core"""
+    core_name = request.get('core_name')
+    if not core_name:
+        return {"success": False, "error": "Core name is required"}
+    
+    result = run_arduino_cli(['arduino-cli', 'core', 'install', core_name])
+    
+    return {
+        "success": result['success'],
+        "message": result['stdout'] if result['success'] else result['stderr']
+    }
+
+@api_router.post("/cores/uninstall")
+async def uninstall_core(request: dict):
+    """Uninstall a core"""
+    core_name = request.get('core_name')
+    if not core_name:
+        return {"success": False, "error": "Core name is required"}
+    
+    result = run_arduino_cli(['arduino-cli', 'core', 'uninstall', core_name])
+    
+    return {
+        "success": result['success'],
+        "message": result['stdout'] if result['success'] else result['stderr']
+    }
 
 @api_router.get("/ports")
 async def get_ports():
