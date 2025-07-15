@@ -353,6 +353,7 @@ async def serial_websocket(websocket: WebSocket, port: str):
         # Start serial monitor
         env = os.environ.copy()
         env['PATH'] = f"/app/bin:{env.get('PATH', '')}"
+        env['HOME'] = '/root'
         
         process = subprocess.Popen(
             ['arduino-cli', 'monitor', '--port', port],
