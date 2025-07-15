@@ -108,7 +108,8 @@ void loop() {
     try {
       const response = await axios.get(`${API}/libraries`);
       if (response.data.success) {
-        setLibraries(response.data.libraries);
+        const librariesArray = response.data.libraries || [];
+        setLibraries(librariesArray);
       }
     } catch (error) {
       console.error('Error loading libraries:', error);
