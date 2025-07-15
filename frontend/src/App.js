@@ -713,21 +713,22 @@ void loop() {
       {/* Board Manager Modal */}
       {showBoardManager && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 p-6 rounded-lg w-[600px] max-h-[80vh] overflow-y-auto">
+          <div className="bg-gray-800 p-6 rounded-lg w-[700px] max-h-[80vh] overflow-y-auto">
             <h3 className="font-semibold mb-4">Board Manager</h3>
             
             {/* Installed Cores */}
             <div className="mb-6">
               <h4 className="font-semibold mb-2">Installed Cores</h4>
-              <div className="max-h-32 overflow-y-auto bg-gray-700 rounded p-2">
+              <div className="max-h-40 overflow-y-auto bg-gray-700 rounded p-2">
                 {cores.length === 0 ? (
                   <p className="text-gray-400 text-sm">No cores installed</p>
                 ) : (
                   cores.map((core, index) => (
-                    <div key={index} className="flex items-center justify-between py-1 border-b border-gray-600">
+                    <div key={index} className="flex items-center justify-between py-2 border-b border-gray-600">
                       <div>
-                        <span className="text-sm font-medium">{core.name}</span>
-                        <span className="text-xs text-gray-400 ml-2">v{core.version}</span>
+                        <span className="text-sm font-medium">{core.id}</span>
+                        <span className="text-xs text-gray-400 ml-2">v{core.installed_version}</span>
+                        <div className="text-xs text-gray-500">by {core.maintainer}</div>
                       </div>
                       <button 
                         onClick={() => {
@@ -744,38 +745,48 @@ void loop() {
               </div>
             </div>
 
-            {/* Available Boards */}
+            {/* Available Platforms */}
             <div className="mb-4">
-              <h4 className="font-semibold mb-2">Available Boards</h4>
-              <div className="max-h-60 overflow-y-auto bg-gray-700 rounded p-2">
-                {availableBoards.length === 0 ? (
-                  <p className="text-gray-400 text-sm">No boards available</p>
+              <h4 className="font-semibold mb-2">Available Platforms</h4>
+              <div className="max-h-80 overflow-y-auto bg-gray-700 rounded p-2">
+                {availablePlatforms.length === 0 ? (
+                  <p className="text-gray-400 text-sm">Loading available platforms...</p>
                 ) : (
-                  availableBoards.map((board, index) => (
-                    <div key={index} className="py-2 border-b border-gray-600">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <div className="text-sm font-semibold">{board.name}</div>
-                          <div className="text-xs text-gray-400">{board.fqbn}</div>
-                          <div className="text-xs text-gray-500">{board.platform?.metadata?.maintainer}</div>
-                        </div>
-                        <div className="flex flex-col items-end">
-                          <div className="text-xs text-gray-400">
-                            {board.platform?.release?.installed ? 'Installed' : 'Not Installed'}
+                  availablePlatforms.map((platform, index) => {
+                    const isInstalled = cores.some(core => core.id === platform.id);
+                    const latestVersion = platform.releases ? Math.max(...Object.keys(platform.releases).map(v => v)) : 'N/A';
+                    
+                    return (
+                      <div key={index} className="py-3 border-b border-gray-600">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="text-sm font-semibold">{platform.id}</div>
+                            <div className="text-xs text-gray-400">by {platform.maintainer}</div>
+                            <div className="text-xs text-gray-500">Latest: v{latestVersion}</div>
+                            {platform.releases && platform.releases[latestVersion] && (
+                              <div className="text-xs text-gray-500 mt-1">
+                                {platform.releases[latestVersion].name}
+                              </div>
+                            )}
                           </div>
-                          {!board.platform?.release?.installed && (
-                            <button 
-                              onClick={() => installCore(board.platform?.metadata?.id)}
-                              disabled={isInstallingCore}
-                              className="bg-green-600 hover:bg-green-700 disabled:bg-gray-600 px-2 py-1 rounded text-xs mt-1"
-                            >
-                              {isInstallingCore ? 'Installing...' : 'Install'}
-                            </button>
-                          )}
+                          <div className="flex flex-col items-end">
+                            <div className="text-xs text-gray-400 mb-1">
+                              {isInstalled ? 'Installed' : 'Not Installed'}
+                            </div>
+                            {!isInstalled && (
+                              <button 
+                                onClick={() => installCore(platform.id)}
+                                disabled={isInstallingCore}
+                                className="bg-green-600 hover:bg-green-700 disabled:bg-gray-600 px-3 py-1 rounded text-xs"
+                              >
+                                {isInstallingCore ? 'Installing...' : 'Install'}
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
             </div>
