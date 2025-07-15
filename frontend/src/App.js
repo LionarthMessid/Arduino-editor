@@ -92,9 +92,10 @@ void loop() {
     try {
       const response = await axios.get(`${API}/ports`);
       if (response.data.success) {
-        setPorts(response.data.ports);
-        if (response.data.ports.length > 0) {
-          setSelectedPort(response.data.ports[0].port);
+        const portsArray = response.data.ports.detected_ports || [];
+        setPorts(portsArray);
+        if (portsArray.length > 0) {
+          setSelectedPort(portsArray[0].port);
         }
       }
     } catch (error) {
