@@ -606,18 +606,84 @@ void loop() {
       {/* Library Manager Modal */}
       {showLibraryManager && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 p-6 rounded-lg w-96">
+          <div className="bg-gray-800 p-6 rounded-lg w-[600px] max-h-[80vh] overflow-y-auto">
             <h3 className="font-semibold mb-4">Library Manager</h3>
-            <div className="max-h-60 overflow-y-auto mb-4">
-              {libraries.map((lib, index) => (
-                <div key={index} className="flex items-center justify-between py-2 border-b border-gray-600">
-                  <span className="text-sm">{lib.name}</span>
-                  <button className="bg-red-600 hover:bg-red-700 px-2 py-1 rounded text-sm">
-                    Remove
-                  </button>
-                </div>
-              ))}
+            
+            {/* Search Box */}
+            <div className="mb-4">
+              <div className="flex">
+                <input
+                  type="text"
+                  placeholder="Search libraries..."
+                  value={librarySearchQuery}
+                  onChange={(e) => setLibrarySearchQuery(e.target.value)}
+                  className="flex-1 bg-gray-700 text-white px-3 py-2 rounded-l text-sm"
+                />
+                <button
+                  onClick={() => searchLibraries(librarySearchQuery)}
+                  disabled={isSearchingLibraries}
+                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 px-4 py-2 rounded-r"
+                >
+                  {isSearchingLibraries ? 'Searching...' : 'Search'}
+                </button>
+              </div>
             </div>
+
+            {/* Installed Libraries */}
+            <div className="mb-6">
+              <h4 className="font-semibold mb-2">Installed Libraries</h4>
+              <div className="max-h-32 overflow-y-auto bg-gray-700 rounded p-2">
+                {libraries.length === 0 ? (
+                  <p className="text-gray-400 text-sm">No libraries installed</p>
+                ) : (
+                  libraries.map((lib, index) => (
+                    <div key={index} className="flex items-center justify-between py-1 border-b border-gray-600">
+                      <div>
+                        <span className="text-sm font-medium">{lib.name}</span>
+                        <span className="text-xs text-gray-400 ml-2">v{lib.version}</span>
+                      </div>
+                      <button 
+                        onClick={() => {
+                          // TODO: Implement uninstall
+                          console.log('Uninstall', lib.name);
+                        }}
+                        className="bg-red-600 hover:bg-red-700 px-2 py-1 rounded text-xs"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            {/* Available Libraries */}
+            <div className="mb-4">
+              <h4 className="font-semibold mb-2">Available Libraries</h4>
+              <div className="max-h-60 overflow-y-auto bg-gray-700 rounded p-2">
+                {availableLibraries.length === 0 ? (
+                  <p className="text-gray-400 text-sm">Search for libraries to install</p>
+                ) : (
+                  availableLibraries.map((lib, index) => (
+                    <div key={index} className="flex items-center justify-between py-2 border-b border-gray-600">
+                      <div>
+                        <span className="text-sm font-medium">{lib.name}</span>
+                        <span className="text-xs text-gray-400 ml-2">v{lib.latest?.version}</span>
+                        <p className="text-xs text-gray-500 mt-1">{lib.latest?.sentence}</p>
+                      </div>
+                      <button 
+                        onClick={() => installLibrary(lib.name)}
+                        disabled={isInstallingLibrary}
+                        className="bg-green-600 hover:bg-green-700 disabled:bg-gray-600 px-2 py-1 rounded text-xs"
+                      >
+                        {isInstallingLibrary ? 'Installing...' : 'Install'}
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
             <div className="flex justify-end">
               <button
                 onClick={() => setShowLibraryManager(false)}
