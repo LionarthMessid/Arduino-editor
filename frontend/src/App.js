@@ -191,13 +191,13 @@ void loop() {
       const response = await axios.post(`${API}/libraries/install`, { library_name: libraryName });
       if (response.data.success) {
         await loadLibraries(); // Refresh installed libraries
-        alert('Library installed successfully!');
+        alert(`Library "${libraryName}" installed successfully!`);
       } else {
         alert('Failed to install library: ' + response.data.message);
       }
     } catch (error) {
       console.error('Error installing library:', error);
-      alert('Error installing library');
+      alert('Error installing library: ' + error.message);
     }
     setIsInstallingLibrary(false);
   };
