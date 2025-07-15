@@ -68,6 +68,7 @@ void loop() {
   const [isInstallingLibrary, setIsInstallingLibrary] = useState(false);
   const [isInstallingCore, setIsInstallingCore] = useState(false);
   const [availablePlatforms, setAvailablePlatforms] = useState([]);
+  const [darkMode, setDarkMode] = useState(true);
   
   const wsRef = useRef(null);
   const editorRef = useRef(null);
