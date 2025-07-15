@@ -116,6 +116,20 @@ def run_arduino_cli(command: List[str]) -> Dict:
 async def root():
     return {"message": "Arduino Code Editor API"}
 
+@api_router.get("/boards")
+async def get_boards():
+    """Get list of available boards"""
+    result = run_arduino_cli(['arduino-cli', 'board', 'listall', '--format', 'json'])
+    
+    if result['success']:
+        try:
+            boards = json.loads(result['stdout'])
+            return {"success": True, "boards": boards.get('boards', [])}
+        except json.JSONDecodeError:
+            return {"success": False, "error": "Failed to parse board list"}
+    
+    return {"success": False, "error": result['stderr']}
+
 @api_router.get("/boards/available")
 async def get_available_boards():
     """Get list of all available boards for installation"""
