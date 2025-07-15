@@ -60,7 +60,13 @@ void loop() {
   const [showBoardManager, setShowBoardManager] = useState(false);
   const [serialInput, setSerialInput] = useState('');
   const [plotData, setPlotData] = useState([]);
-  const [darkMode, setDarkMode] = useState(true);
+  const [availableBoards, setAvailableBoards] = useState([]);
+  const [availableLibraries, setAvailableLibraries] = useState([]);
+  const [cores, setCores] = useState([]);
+  const [librarySearchQuery, setLibrarySearchQuery] = useState('');
+  const [isSearchingLibraries, setIsSearchingLibraries] = useState(false);
+  const [isInstallingLibrary, setIsInstallingLibrary] = useState(false);
+  const [isInstallingCore, setIsInstallingCore] = useState(false);
   
   const wsRef = useRef(null);
   const editorRef = useRef(null);
