@@ -123,6 +123,17 @@ void loop() {
     }
   };
 
+  const loadWorkspace = async () => {
+    try {
+      const response = await axios.get(`${API}/workspace`);
+      if (response.data.success) {
+        setWorkspaceTree(response.data.tree);
+      }
+    } catch (error) {
+      console.error('Error loading workspace:', error);
+    }
+  };
+
   const loadAvailableBoards = async () => {
     try {
       const response = await axios.get(`${API}/boards/available`);
