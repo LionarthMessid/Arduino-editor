@@ -78,9 +78,10 @@ void loop() {
     try {
       const response = await axios.get(`${API}/boards`);
       if (response.data.success) {
-        setBoards(response.data.boards);
-        if (response.data.boards.length > 0) {
-          setSelectedBoard(response.data.boards[0].fqbn);
+        const boardsArray = response.data.boards || [];
+        setBoards(boardsArray);
+        if (boardsArray.length > 0) {
+          setSelectedBoard(boardsArray[0].fqbn);
         }
       }
     } catch (error) {
