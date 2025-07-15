@@ -123,15 +123,74 @@ void loop() {
     }
   };
 
-  const loadWorkspace = async () => {
+  const loadAvailableBoards = async () => {
     try {
-      const response = await axios.get(`${API}/workspace`);
+      const response = await axios.get(`${API}/boards/available`);
       if (response.data.success) {
-        setWorkspaceTree(response.data.tree);
+        setAvailableBoards(response.data.boards || []);
       }
     } catch (error) {
-      console.error('Error loading workspace:', error);
+      console.error('Error loading available boards:', error);
     }
+  };
+
+  const loadCores = async () => {
+    try {
+      const response = await axios.get(`${API}/cores`);
+      if (response.data.success) {
+        setCores(response.data.cores || []);
+      }
+    } catch (error) {
+      console.error('Error loading cores:', error);
+    }
+  };
+
+  const searchLibraries = async (query = '') => {
+    setIsSearchingLibraries(true);
+    try {
+      const response = await axios.post(`${API}/libraries/search`, { query });
+      if (response.data.success) {
+        setAvailableLibraries(response.data.libraries || []);
+      }
+    } catch (error) {
+      console.error('Error searching libraries:', error);
+    }
+    setIsSearchingLibraries(false);
+  };
+
+  const installLibrary = async (libraryName) => {
+    setIsInstallingLibrary(true);
+    try {
+      const response = await axios.post(`${API}/libraries/install`, { library_name: libraryName });
+      if (response.data.success) {
+        await loadLibraries(); // Refresh installed libraries
+        alert('Library installed successfully!');
+      } else {
+        alert('Failed to install library: ' + response.data.message);
+      }
+    } catch (error) {
+      console.error('Error installing library:', error);
+      alert('Error installing library');
+    }
+    setIsInstallingLibrary(false);
+  };
+
+  const installCore = async (coreName) => {
+    setIsInstallingCore(true);
+    try {
+      const response = await axios.post(`${API}/cores/install`, { core_name: coreName });
+      if (response.data.success) {
+        await loadCores(); // Refresh cores
+        await loadBoards(); // Refresh available boards
+        alert('Core installed successfully!');
+      } else {
+        alert('Failed to install core: ' + response.data.message);
+      }
+    } catch (error) {
+      console.error('Error installing core:', error);
+      alert('Error installing core');
+    }
+    setIsInstallingCore(false);
   };
 
   const saveFile = async (path, content) => {
