@@ -754,7 +754,7 @@ void loop() {
                 ) : (
                   availablePlatforms.map((platform, index) => {
                     const isInstalled = cores.some(core => core.id === platform.id);
-                    const latestVersion = platform.releases ? Math.max(...Object.keys(platform.releases).map(v => v)) : 'N/A';
+                    const latestVersion = platform.latest_version || 'N/A';
                     
                     return (
                       <div key={index} className="py-3 border-b border-gray-600">
