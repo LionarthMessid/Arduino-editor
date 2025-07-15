@@ -340,6 +340,7 @@ void loop() {
                 onChange={(e) => setSelectedBoard(e.target.value)}
                 className="w-full bg-gray-700 text-white px-2 py-1 rounded text-sm"
               >
+                <option value="">Select Board</option>
                 {boards.map((board, index) => (
                   <option key={index} value={board.fqbn}>{board.name}</option>
                 ))}
