@@ -81,6 +81,7 @@ void loop() {
     loadWorkspace();
     loadAvailableBoards();
     loadCores();
+    loadAvailablePlatforms();
     searchLibraries(); // Load initial library list
   }, []);
 
