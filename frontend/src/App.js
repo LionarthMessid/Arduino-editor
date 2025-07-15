@@ -208,13 +208,14 @@ void loop() {
       if (response.data.success) {
         await loadCores(); // Refresh cores
         await loadBoards(); // Refresh available boards
+        await loadAvailablePlatforms(); // Refresh available platforms
         alert('Core installed successfully!');
       } else {
         alert('Failed to install core: ' + response.data.message);
       }
     } catch (error) {
       console.error('Error installing core:', error);
-      alert('Error installing core');
+      alert('Error installing core: ' + error.message);
     }
     setIsInstallingCore(false);
   };
