@@ -79,9 +79,10 @@ class LibraryRequest(BaseModel):
 def run_arduino_cli(command: List[str]) -> Dict:
     """Run arduino-cli command and return result"""
     try:
-        # Add arduino-cli to PATH
+        # Add arduino-cli to PATH and set HOME
         env = os.environ.copy()
         env['PATH'] = f"/app/bin:{env.get('PATH', '')}"
+        env['HOME'] = '/root'
         
         result = subprocess.run(
             command,
