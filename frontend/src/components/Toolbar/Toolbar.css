@@ -1,0 +1,92 @@
+.toolbar {
+  display: flex;
+  background-color: #333;
+  padding: 8px;
+  border-bottom: 1px solid #444;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.toolbar-section {
+  display: flex;
+  margin-right: 15px;
+  align-items: center;
+}
+
+.toolbar-button {
+  background-color: #444;
+  color: #e0e0e0;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  margin-right: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.2s;
+}
+
+.toolbar-button:hover {
+  background-color: #555;
+}
+
+.toolbar-button:active {
+  background-color: #666;
+}
+
+.toolbar-button.active {
+  background-color: #0066cc;
+}
+
+.toolbar-button i {
+  margin-right: 5px;
+}
+
+.toolbar-button.compile {
+  background-color: #2c882c;
+}
+
+.toolbar-button.compile:hover {
+  background-color: #3a9d3a;
+}
+
+.toolbar-button.upload {
+  background-color: #0066cc;
+}
+
+.toolbar-button.upload:hover {
+  background-color: #0077ee;
+}
+
+.toolbar-button.refresh {
+  padding: 6px 8px;
+}
+
+.port-select,
+.board-select {
+  background-color: #444;
+  color: #e0e0e0;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 8px;
+  margin-right: 5px;
+  font-size: 13px;
+  min-width: 150px;
+}
+
+.port-select:focus,
+.board-select:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.5);
+}
+
+@media (max-width: 1200px) {
+  .toolbar {
+    flex-wrap: wrap;
+  }
+  
+  .toolbar-section {
+    margin-bottom: 8px;
+  }
+}

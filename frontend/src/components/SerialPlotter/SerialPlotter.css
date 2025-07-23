@@ -1,0 +1,60 @@
+.serial-plotter {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.serial-plotter-header {
+  padding: 10px;
+  background-color: #333;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #444;
+}
+
+.serial-plotter-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.plotter-button {
+  background-color: #444;
+  color: #e0e0e0;
+  border: none;
+  border-radius: 3px;
+  padding: 4px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.plotter-button:hover:not(:disabled) {
+  background-color: #555;
+}
+
+.plotter-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.serial-plotter-content {
+  flex: 1;
+  padding: 10px;
+  background-color: #1e1e1e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.no-data-message {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+}
+
+.no-data-message p {
+  margin: 5px 0;
+}
