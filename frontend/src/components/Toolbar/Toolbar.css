@@ -39,6 +39,10 @@
   background-color: #0066cc;
 }
 
+.user-section {
+  margin-left: auto;
+}
+
 .toolbar-button i {
   margin-right: 5px;
 }

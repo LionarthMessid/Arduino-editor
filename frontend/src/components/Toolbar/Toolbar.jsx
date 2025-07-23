@@ -1,5 +1,6 @@
 import React from 'react';
 import useArduino from '../../hooks/useArduino';
+import { UserProfile } from '../Auth';
 import './Toolbar.css';
 
 const Toolbar = () => {
@@ -97,6 +98,10 @@ const Toolbar = () => {
         <button className="toolbar-button" onClick={() => setShowBoardManager(true)}>
           <i className="fas fa-microchip"></i> Board Manager
         </button>
+      </div>
+      
+      <div className="toolbar-section user-section">
+        <UserProfile />
       </div>
     </div>
   );
